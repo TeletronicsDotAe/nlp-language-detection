@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class Optimaize implements LanguageDetector {
 
     protected static com.optimaize.langdetect.LanguageDetector instance;
-    private static LanguageCode defaultLang = LanguageCode.en;
+    private static LanguageCode defaultLang = LanguageCode.undefined;
 
     static {
             try{

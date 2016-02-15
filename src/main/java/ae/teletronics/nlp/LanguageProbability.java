@@ -18,15 +18,7 @@ public class LanguageProbability {
         return language;
     }
 
-    public void setLanguage(LanguageCode language) {
-        this.language = language;
-    }
-
     public double getProbability() {
         return probability;
-    }
-
-    public void setProbability(double probability) {
-        this.probability = probability;
     }
 }
