@@ -1,4 +1,4 @@
-package ae.teletronics.nlp.language.detection;
+package ae.teletronics.nlp;
 
 /**
  * Created by Boris on 11-02-2016.

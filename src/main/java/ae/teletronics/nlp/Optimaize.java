@@ -1,4 +1,4 @@
-package ae.teletronics.nlp.language.detection;
+package ae.teletronics.nlp;
 
 import com.google.common.base.Optional;
 import com.neovisionaries.i18n.LanguageCode;

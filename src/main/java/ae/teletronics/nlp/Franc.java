@@ -1,4 +1,4 @@
-package ae.teletronics.nlp.language.detection;
+package ae.teletronics.nlp;
 
 import com.neovisionaries.i18n.LanguageCode;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
