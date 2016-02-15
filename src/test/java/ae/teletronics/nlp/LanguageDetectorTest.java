@@ -15,39 +15,74 @@ import java.util.stream.Collectors;
  */
 public class LanguageDetectorTest extends TestCase {
 
+    NamedDetector franc;
+    NamedDetector tika;
+    NamedDetector champeu;
+    NamedDetector optimaize;
+    NamedDetector optimaizeFallback;
+
+    NamedTestSet euroParlTestCases;
+    NamedTestSet arabicTestCases;
+    NamedTestSet urduTestCases;
+    NamedTestSet hindiTestCases;
+
+    protected void setUp() throws Exception {
+        franc = new NamedDetector(DetectorFactory.makeSingleDetector(DetectorType.FRANC), "Franc");
+        tika = new NamedDetector(DetectorFactory.makeSingleDetector(DetectorType.TIKA), "Tika");
+        champeu = new NamedDetector(DetectorFactory.makeSingleDetector(DetectorType.CHAMPEU), "Champeu");
+        optimaize = new NamedDetector(DetectorFactory.makeDetector(DetectorType.OPTIMAIZE), "Optimaize");
+        optimaizeFallback = new NamedDetector(DetectorFactory.makeDetector(DetectorType.OPTIMAIZE, DetectorType.CHAMPEU), "Optimaize - Champeu Fallback");
+
+        euroParlTestCases = new NamedTestSet("europarl", getEuroParlTestCases());
+        arabicTestCases = new NamedTestSet("arabic", getGenericTestCases("arabic.test", "ar"));
+        urduTestCases = new NamedTestSet("urdu", getGenericTestCases("urdu.test", "ur"));
+        hindiTestCases = new NamedTestSet("hindi", getGenericTestCases("hindi.test", "hi"));
+    }
+
     public void testDetectorPerformanceAndQuality() throws Exception {
-        List<LanguageTestCase> euroParlTestCases = getEuroParlTestCases();
-        List<LanguageTestCase> arabicTestCases = getGenericTestCases("arabic.test", "ar");
-        List<LanguageTestCase> urduTestCases = getGenericTestCases("urdu.test", "ur");
-        List<LanguageTestCase> hindiTestCases = getGenericTestCases("hindi.test", "hi");
-
-        runLanguageDetectionTest(euroParlTestCases, "europarl");
-        runLanguageDetectionTest(arabicTestCases, "arabic");
-        runLanguageDetectionTest(urduTestCases, "urdu");
-        runLanguageDetectionTest(hindiTestCases, "hindi");
+        runLanguageDetectionTest(euroParlTestCases);
+        runLanguageDetectionTest(arabicTestCases);
+        runLanguageDetectionTest(urduTestCases);
+        runLanguageDetectionTest(hindiTestCases);
     }
 
-    private void runLanguageDetectionTest(List<LanguageTestCase> testCases, String testCaseSet)
+    public void testDetectorMostProbablePerformanceAndQuality() throws Exception {
+        runProbableLanguageDetectionTest(euroParlTestCases, 0.7);
+        runProbableLanguageDetectionTest(arabicTestCases, 0.7);
+        runProbableLanguageDetectionTest(urduTestCases, 0.7);
+        runProbableLanguageDetectionTest(hindiTestCases, 0.7);
+    }
+
+    private void runProbableLanguageDetectionTest(NamedTestSet testSet, double threshold) {
+        System.out.println("Running probable detection test on " + testSet.getTestcases().size() + " lines from " + testSet.getName() + "...");
+
+//        runProbableDetectorTest(franc, testSet.getTestcases(), threshold);
+  //      runProbableDetectorTest(tika, testSet.getTestcases(), threshold);
+    //    runProbableDetectorTest(champeu, testSet.getTestcases(), threshold);
+      //  runProbableDetectorTest(optimaize, testSet.getTestcases(), threshold);
+        runProbableDetectorTest(optimaizeFallback, testSet.getTestcases(), threshold);
+    }
+
+    private void runProbableDetectorTest(NamedDetector detector, List<LanguageTestCase> testCases, double threshold)
     {
-        Franc franc = new Franc();
-        TikaDetector tika = new TikaDetector();
-        Champeu champeu = new Champeu();
-        Optimaize optimaize = new Optimaize();
-        OptimaizeFallback optimaizeFallback = new OptimaizeFallback();
 
-        System.out.println("Running test on " + testCases.size() + " lines from " + testCaseSet + "...");
-
-        runDetectorTest(franc, "Franc", testCases);
-        runDetectorTest(tika, "Tika", testCases);
-        runDetectorTest(champeu, "Champeu", testCases);
-        runDetectorTest(optimaize, "Optimaize", testCases);
-        runDetectorTest(optimaizeFallback, "OptimaizeFallback", testCases);
     }
 
-    private void runDetectorTest(LanguageDetector detector, String name, List<LanguageTestCase> testCases) {
-        System.out.println("--------------- Testing " + name + " ----------------");
+    private void runLanguageDetectionTest(NamedTestSet testSet)
+    {
+        System.out.println("Running test on " + testSet.getTestcases().size() + " lines from " + testSet.getName() + "...");
+
+//        runDetectorTest(franc, testSet.getTestcases());
+  //      runDetectorTest(tika, testSet.getTestcases());
+    //    runDetectorTest(champeu, testSet.getTestcases());
+      //  runDetectorTest(optimaize, testSet.getTestcases());
+        runDetectorTest(optimaizeFallback, testSet.getTestcases());
+    }
+
+    private void runDetectorTest(NamedDetector detector, List<LanguageTestCase> testCases) {
+        System.out.println("--------------- Testing " + detector.getName() + " ----------------");
         long start = System.currentTimeMillis();
-        List<LanguageTestResult> results = testCases.stream().map(testCase -> new LanguageTestResult(testCase, detector.detect(testCase.getLine()))).collect(Collectors.toList());
+        List<LanguageTestResult> results = testCases.stream().map(testCase -> new LanguageTestResult(testCase, detector.getDetector().detect(testCase.getLine()))).collect(Collectors.toList());
         long end = System.currentTimeMillis();
         long diffMillis = end - start;
 
@@ -59,7 +94,7 @@ public class LanguageDetectorTest extends TestCase {
                 .map(r -> r.getTestResult() + " / " + r.getTestCase().getLanguage())
                 .collect(Collectors.groupingBy(s -> s)));
 
-        System.out.println("Results for " + name + ": " + successCount + " / " + allCount + ", time(millis): " + diffMillis);
+        System.out.println("Results for " + detector.getName() + ": " + successCount + " / " + allCount + ", time(millis): " + diffMillis);
         for (Map.Entry<String, List<String>> entry : mistakes.entrySet()) {
             System.out.println("  " + entry.getKey() + " - " + entry.getValue().size());
         }
@@ -105,48 +140,5 @@ public class LanguageDetectorTest extends TestCase {
         String lang = line.substring(0, tabIdx);
         String text = line.substring(tabIdx + 1);
         return new LanguageTestCase(text, LanguageMapper.fromString(lang));
-    }
-
-    private class LanguageTestCase {
-        private String line;
-        private LanguageCode language;
-
-        public LanguageTestCase(String line, LanguageCode language) {
-            this.line = line;
-            this.language = language;
-        }
-
-        public String getLine() {
-            return line;
-        }
-
-        public LanguageCode getLanguage() {
-            return language;
-        }
-    }
-
-    private class LanguageTestResult {
-        private LanguageTestCase testCase;
-        private LanguageCode testResult;
-
-        public LanguageTestCase getTestCase() {
-            return testCase;
-        }
-
-        public LanguageCode getTestResult() {
-            return testResult;
-        }
-
-        public LanguageTestResult(LanguageTestCase testCase, LanguageCode testResult) {
-
-            this.testCase = testCase;
-            this.testResult = testResult;
-        }
-
-        // agnostic about whether the result is two-letter language or three-letter language
-        public boolean isSuccess()
-        {
-            return testCase.getLanguage().equals(testResult);
-        }
     }
 }
