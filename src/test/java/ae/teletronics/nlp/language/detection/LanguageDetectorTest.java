@@ -16,15 +16,26 @@ import java.util.stream.Collectors;
 public class LanguageDetectorTest extends TestCase {
 
     public void testDetectorPerformanceAndQuality() throws Exception {
+        List<LanguageTestCase> euroParlTestCases = getEuroParlTestCases();
+        List<LanguageTestCase> arabicTestCases = getGenericTestCases("arabic.test", "ar");
+        List<LanguageTestCase> urduTestCases = getGenericTestCases("urdu.test", "ur");
+        List<LanguageTestCase> hindiTestCases = getGenericTestCases("hindi.test", "hi");
+
+        runLanguageDetectionTest(euroParlTestCases, "europarl");
+        runLanguageDetectionTest(arabicTestCases, "arabic");
+        runLanguageDetectionTest(urduTestCases, "urdu");
+        runLanguageDetectionTest(hindiTestCases, "hindi");
+    }
+
+    private void runLanguageDetectionTest(List<LanguageTestCase> testCases, String testCaseSet)
+    {
         Franc franc = new Franc();
         TikaDetector tika = new TikaDetector();
         Champeu champeu = new Champeu();
         Optimaize optimaize = new Optimaize();
         OptimaizeFallback optimaizeFallback = new OptimaizeFallback();
 
-        List<LanguageTestCase> testCases = getTestCases();
-
-        System.out.println("Running test on " + testCases.size() + " lines...");
+        System.out.println("Running test on " + testCases.size() + " lines from " + testCaseSet + "...");
 
         runDetectorTest(franc, "Franc", testCases);
         runDetectorTest(tika, "Tika", testCases);
@@ -54,9 +65,27 @@ public class LanguageDetectorTest extends TestCase {
         }
     }
 
-    private List<LanguageTestCase> getTestCases() {
+    private List<LanguageTestCase> getEuroParlTestCases() {
+        List<String> lines = getResourceFileLines("europarl.test");
+
+        return lines
+                .stream()
+                .map(s -> parseEuroParlTestCase(s))
+                .collect(Collectors.toList());
+    }
+
+    private List<LanguageTestCase> getGenericTestCases(String filename, String iso639_1_LanguageCode) {
+        List<String> lines = getResourceFileLines(filename);
+
+        return lines
+                .stream()
+                .map(text -> new LanguageTestCase(text, LanguageMapper.fromString(iso639_1_LanguageCode)))
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getResourceFileLines(String resourceFileName) {
         ClassLoader classLoader = new LanguageDetectorTest().getClass().getClassLoader();
-        File langSentences = new File(classLoader.getResource("europarl.test").getFile());
+        File langSentences = new File(classLoader.getResource(resourceFileName).getFile());
         List<String> lines = null;
         try
         {
@@ -67,14 +96,10 @@ public class LanguageDetectorTest extends TestCase {
             System.out.println("Got exception: " + e.toString());
             System.exit(1);
         }
-
-        return lines
-                .stream()
-                .map(s -> parseTestCase(s))
-                .collect(Collectors.toList());
+        return lines;
     }
 
-    private LanguageTestCase parseTestCase(String line)
+    private LanguageTestCase parseEuroParlTestCase(String line)
     {
         int tabIdx = line.indexOf('\t');
         String lang = line.substring(0, tabIdx);
