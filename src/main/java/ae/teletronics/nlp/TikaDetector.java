@@ -3,6 +3,7 @@ package ae.teletronics.nlp;
 import com.neovisionaries.i18n.LanguageCode;
 import org.apache.tika.language.LanguageIdentifier;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,8 @@ public class TikaDetector implements LanguageDetector {
 
     @Override
     public List<LanguageProbability> detectAll(String text) {
-        throw new UnsupportedOperationException();
+        List<LanguageProbability> ret = new ArrayList<>();
+        ret.add(new LanguageProbability(detect(text), 0.0));
+        return ret;
     }
 }
