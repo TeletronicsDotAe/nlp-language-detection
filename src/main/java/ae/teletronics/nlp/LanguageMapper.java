@@ -14,7 +14,7 @@ public class LanguageMapper {
     static
     {
         List<LanguageCode> codes = Arrays.asList(LanguageCode.values());
-        theMap = new HashMap<String, LanguageCode>();
+        theMap = new HashMap<>();
         for (LanguageCode code : codes)
             if (!code.name().equals("undefined")) {
                 Locale locale = Locale.forLanguageTag(code.name());
