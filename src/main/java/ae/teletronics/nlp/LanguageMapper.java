@@ -25,12 +25,13 @@ public class LanguageMapper {
     public static LanguageCode fromLocale(Locale locale)
     {
         LanguageCode lc = theMap.get(locale.getISO3Language());
-        if (lc == null)
-        {
-            System.out.println("null for " + locale.getISO3Language());
+        if (lc != null) {
+            return lc;
+        } else {
+            System.err.println("null for " + locale.getISO3Language());
+            return LanguageCode.undefined;
         }
 
-        return theMap.get(locale.getISO3Language());
     }
 
     public static LanguageCode fromString(String langString)
