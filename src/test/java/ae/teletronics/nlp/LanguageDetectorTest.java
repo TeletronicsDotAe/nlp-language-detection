@@ -47,35 +47,57 @@ public class LanguageDetectorTest extends TestCase {
     }
 
     public void testDetectorMostProbablePerformanceAndQuality() throws Exception {
-        runProbableLanguageDetectionTest(euroParlTestCases, 0.7);
-        runProbableLanguageDetectionTest(arabicTestCases, 0.7);
-        runProbableLanguageDetectionTest(urduTestCases, 0.7);
-        runProbableLanguageDetectionTest(hindiTestCases, 0.7);
+        runProbableLanguageDetectionTest(euroParlTestCases);
+        runProbableLanguageDetectionTest(arabicTestCases);
+        runProbableLanguageDetectionTest(urduTestCases);
+        runProbableLanguageDetectionTest(hindiTestCases);
     }
 
-    private void runProbableLanguageDetectionTest(NamedTestSet testSet, double threshold) {
+    private void runProbableLanguageDetectionTest(NamedTestSet testSet) {
         System.out.println("Running probable detection test on " + testSet.getTestcases().size() + " lines from " + testSet.getName() + "...");
 
-//        runProbableDetectorTest(franc, testSet.getTestcases(), threshold);
-  //      runProbableDetectorTest(tika, testSet.getTestcases(), threshold);
-    //    runProbableDetectorTest(champeu, testSet.getTestcases(), threshold);
-      //  runProbableDetectorTest(optimaize, testSet.getTestcases(), threshold);
-        runProbableDetectorTest(optimaizeFallback, testSet.getTestcases(), threshold);
+        runProbableDetectorTest(franc, testSet.getTestcases());
+        runProbableDetectorTest(tika, testSet.getTestcases());
+        runProbableDetectorTest(champeu, testSet.getTestcases());
+        runProbableDetectorTest(optimaize, testSet.getTestcases());
+        runProbableDetectorTest(optimaizeFallback, testSet.getTestcases());
     }
 
-    private void runProbableDetectorTest(NamedDetector detector, List<LanguageTestCase> testCases, double threshold)
+    private void runProbableDetectorTest(NamedDetector detector, List<LanguageTestCase> testCases)
     {
+        System.out.println("--------------- Testing " + detector.getName() + " ----------------");
+        double[] thresholds = new double[] {0.5, 0.7, 0.8, 0.9, 0.95, 0.98, 0.99, 0.999};
 
+        long start = System.currentTimeMillis();
+        List<LanguageProbabilityTestResult> results = testCases
+                .stream()
+                .map(testCase -> new LanguageProbabilityTestResult(detector.getDetector().detectAll(testCase.getLine()), testCase))
+                .collect(Collectors.toList());
+        long end = System.currentTimeMillis();
+        long diffMillis = end - start;
+
+        System.out.println("Results for " + detector.getName() + ": time(millis): " + diffMillis);
+
+        for (double threshold : thresholds) {
+            List<LanguageProbabilityTestResult> included = results.stream().filter(r ->  r.isIncludedAtThreshold(threshold)).collect(Collectors.toList());
+            long allCount = testCases.size();
+            long includedCount = included.size();
+            long excludedCount = allCount - includedCount;
+            long successCount = included.stream().filter(r -> r.isSuccessAtThreshold(threshold)).count();
+            double rejectedRate = excludedCount * 1.0 / allCount;
+            double hitRate = successCount * 1.0 / includedCount;
+            System.out.println("   At threshold " + threshold + " --- RejectedRate: " + rejectedRate + " (" + excludedCount + " / " + allCount + "), HitRate: " + hitRate + " (" + successCount + " / " + includedCount + ")");
+        }
     }
 
     private void runLanguageDetectionTest(NamedTestSet testSet)
     {
         System.out.println("Running test on " + testSet.getTestcases().size() + " lines from " + testSet.getName() + "...");
 
-//        runDetectorTest(franc, testSet.getTestcases());
-  //      runDetectorTest(tika, testSet.getTestcases());
-    //    runDetectorTest(champeu, testSet.getTestcases());
-      //  runDetectorTest(optimaize, testSet.getTestcases());
+        runDetectorTest(franc, testSet.getTestcases());
+        runDetectorTest(tika, testSet.getTestcases());
+        runDetectorTest(champeu, testSet.getTestcases());
+        runDetectorTest(optimaize, testSet.getTestcases());
         runDetectorTest(optimaizeFallback, testSet.getTestcases());
     }
 
