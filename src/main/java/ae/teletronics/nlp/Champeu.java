@@ -24,7 +24,7 @@ public class Champeu implements LanguageDetector {
         UberLanguageDetector detector = UberLanguageDetector.getInstance();
         final Collection<LangDetector.Score> scores = detector.scoreLanguages(text);
         return scores.stream()
-                .map(score -> new LanguageProbability(score.getLanguage(), score.getScore()))
+                .map(score -> new LanguageProbability(LanguageMapper.fromString(score.getLanguage()), score.getScore()))
                 .collect(Collectors.toList());
     }
 }

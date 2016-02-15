@@ -51,7 +51,7 @@ public class Franc implements LanguageDetector {
             final ScriptObjectMirror franc = (ScriptObjectMirror) instance.invokeMethod(engine.eval("franc"), "all", text);
             return franc.keySet().stream().limit(5).map(key -> {
                 final ScriptObjectMirror obj = (ScriptObjectMirror) franc.get(key);
-                return new LanguageProbability(obj.get("0").toString(), new Double(obj.get("1").toString()));
+                return new LanguageProbability(LanguageMapper.fromString(obj.get("0").toString()), new Double(obj.get("1").toString()));
             }).collect(Collectors.toList());
         } catch (ScriptException e) {
             throw new RuntimeException(e);

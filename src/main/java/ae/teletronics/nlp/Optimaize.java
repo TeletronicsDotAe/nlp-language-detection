@@ -43,7 +43,7 @@ public class Optimaize implements LanguageDetector {
     @Override
     public List<LanguageProbability> detectAll(String text) {
         return instance.getProbabilities(text).stream()
-                .map(score -> new LanguageProbability(score.getLocale().getLanguage(), score.getProbability()))
+                .map(score -> new LanguageProbability(LanguageMapper.fromString(score.getLocale().getLanguage()), score.getProbability()))
                 .collect(Collectors.toList());
     }
 }
