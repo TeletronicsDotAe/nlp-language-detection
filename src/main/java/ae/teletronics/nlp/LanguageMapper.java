@@ -22,20 +22,11 @@ public class LanguageMapper {
             }
     }
 
-    public static LanguageCode fromLocale(Locale locale)
-    {
-        LanguageCode lc = theMap.get(locale.getISO3Language());
-        if (lc != null) {
-            return lc;
-        } else {
-            System.err.println("null for " + locale.getISO3Language());
-            return LanguageCode.undefined;
-        }
-
+    public static LanguageCode fromLocale(Locale locale) {
+        return theMap.getOrDefault(locale.getISO3Language(), LanguageCode.undefined);
     }
 
-    public static LanguageCode fromString(String langString)
-    {
+    public static LanguageCode fromString(String langString) {
         return fromLocale(Locale.forLanguageTag(langString));
     }
 }
