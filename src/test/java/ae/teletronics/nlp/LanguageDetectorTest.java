@@ -1,6 +1,5 @@
 package ae.teletronics.nlp;
 
-import com.neovisionaries.i18n.LanguageCode;
 import junit.framework.TestCase;
 import org.apache.commons.io.FileUtils;
 
@@ -54,7 +53,8 @@ public class LanguageDetectorTest extends TestCase {
     }
 
     private void runProbableLanguageDetectionTest(NamedTestSet testSet) {
-        System.out.println("Running probable detection test on " + testSet.getTestcases().size() + " lines from " + testSet.getName() + "...");
+        System.out.println();
+        System.out.println("|||||||||||||||||||| Running probable detection test on " + testSet.getTestcases().size() + " lines from " + testSet.getName() + " ||||||||||||||||||");
 
         runProbableDetectorTest(franc, testSet.getTestcases());
         runProbableDetectorTest(tika, testSet.getTestcases());
@@ -92,7 +92,8 @@ public class LanguageDetectorTest extends TestCase {
 
     private void runLanguageDetectionTest(NamedTestSet testSet)
     {
-        System.out.println("Running test on " + testSet.getTestcases().size() + " lines from " + testSet.getName() + "...");
+        System.out.println();
+        System.out.println("|||||||||||||||||||| Running test on " + testSet.getTestcases().size() + " lines from " + testSet.getName() + " ||||||||||||||||||||");
 
         runDetectorTest(franc, testSet.getTestcases());
         runDetectorTest(tika, testSet.getTestcases());

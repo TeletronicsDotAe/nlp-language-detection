@@ -19,7 +19,7 @@ public class TikaDetector implements LanguageDetector {
     @Override
     public List<LanguageProbability> detectAll(String text) {
         List<LanguageProbability> ret = new ArrayList<>();
-        ret.add(new LanguageProbability(detect(text), 0.0));
+        ret.add(new LanguageProbability(detect(text), 0.6));
         return ret;
     }
 }
