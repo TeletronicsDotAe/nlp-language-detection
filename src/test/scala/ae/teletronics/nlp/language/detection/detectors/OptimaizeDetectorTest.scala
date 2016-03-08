@@ -52,7 +52,7 @@ class OptimaizeDetectorTest {
         println("Optimaize: " + p._2 + ". Champeau: " + champeauLang + ". Carrot: " + carrotLang + ". tika: " + tikaLang)
         p._2
       })
-      exists (!_.isPresent()))
+      exists(!_.isPresent()))
     // all samples should be danish
   }
 

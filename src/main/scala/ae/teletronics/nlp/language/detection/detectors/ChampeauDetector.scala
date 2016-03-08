@@ -10,14 +10,14 @@ import me.champeau.ld.UberLanguageDetector
 /**
   * Created by trym on 18-02-2016.
   */
-class ChampeauDetector extends SLanguageDetector {
+class ChampeauDetector(confidenceLevel: Double = 100) extends SLanguageDetector {
 
   override def detect(text: String): Optional[LanguageCode] = {
     val res: util.Collection[Score] = UberLanguageDetector.getInstance().scoreLanguages(text)
     val iterator = res.iterator()
     if (iterator.hasNext){
       val score = res.iterator().next()
-      if (score.getScore() > 20) {
+      if (score.getScore() > confidenceLevel) {
         Optional.of(LanguageCode.getByCodeIgnoreCase(score.getLanguage))
       } else {
         Optional.empty()

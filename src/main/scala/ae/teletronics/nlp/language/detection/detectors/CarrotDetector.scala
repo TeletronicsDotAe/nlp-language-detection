@@ -12,12 +12,12 @@ object CarrotDetector {
   val instance = new LangIdV3()
 }
 
-class CarrotDetector extends SLanguageDetector {
+class CarrotDetector(confidenceLevel: Double = 0.999) extends SLanguageDetector {
 
   override def detect(text: String): Optional[LanguageCode] = {
     val res = CarrotDetector.instance.classify(text, true)
     //println("CarrotDetector: confidence: " + res.getConfidence())
-    if (res.getConfidence() > 0.99) {
+    if (res.getConfidence() > confidenceLevel) {
       Optional.of(LanguageCode.getByCodeIgnoreCase(res.getLangCode()))
     } else {
       Optional.empty()

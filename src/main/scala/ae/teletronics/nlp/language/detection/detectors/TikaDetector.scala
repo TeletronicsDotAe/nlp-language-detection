@@ -10,11 +10,12 @@ import org.apache.tika.language.LanguageIdentifier
   */
 class TikaDetector extends SLanguageDetector {
   override def detect(text: String): Optional[LanguageCode] = {
-    val res: String = new LanguageIdentifier(text).getLanguage()
-    if (res != null) {
-      Optional.of(LanguageCode.getByCodeIgnoreCase(res))
+    val languageIdentifier = new LanguageIdentifier(text)
+    val lang = if (languageIdentifier.isReasonablyCertain()) {
+      LanguageCode.getByCodeIgnoreCase(languageIdentifier.getLanguage())
     } else {
-      Optional.empty()
+      null
     }
+    Optional.ofNullable(lang)
   }
 }
