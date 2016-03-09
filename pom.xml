@@ -10,7 +10,7 @@
 
   <groupId>ae.teletronics.nlp</groupId>
   <artifactId>language-detector</artifactId>
-  <version>0.4.0</version>
+  <version>0.5-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Language detector</name>
 
