@@ -1,8 +1,6 @@
 package ae.teletronics.nlp.language.detection.detectors
 
-import com.neovisionaries.i18n.LanguageCode
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
@@ -33,32 +31,15 @@ object OptimaizeDetectorTest {
 }
 class OptimaizeDetectorTest {
 
-//  val underTest = new FallbackDetector(List(new OptimaizeDetector(), new ChampeauDetector()))
-  val underTest = new FallbackDetector(List(new ChampeauDetector(), new OptimaizeDetector()))
-//  val underTest = new OptimaizeDetector()
-
-  @Test
-  def testDetect() = {
-    val champeau = new ChampeauDetector()
-    val carrot = new CarrotDetector()
-    val tika = new TikaDetector()
-    // all samples should be detected
-    assertFalse(OptimaizeDetectorTest.danishExamples.
-      map(t => (t, underTest.detect(t))).
-      map(p => {
-        val champeauLang = champeau.detect(p._1)
-        val carrotLang = carrot.detect(p._1)
-        val tikaLang = tika.detect(p._1)
-        println("Optimaize: " + p._2 + ". Champeau: " + champeauLang + ". Carrot: " + carrotLang + ". tika: " + tikaLang)
-        p._2
-      })
-      exists(!_.isPresent()))
-    // all samples should be danish
-  }
+  val underTest = new FallbackDetector(List(new CarrotDetector(), new OptimaizeDetector(), new ChampeauDetector()))
 
   @Test
   def testIsDanish() = {
-    val lang = OptimaizeDetectorTest.danishExamples.map(underTest.detect(_))
-    lang.foreach(println)
+    val lang = OptimaizeDetectorTest.danishExamples.map(underTest.detect)
+    lang.foreach(lang => {
+      if (lang.isPresent) {
+        assertEquals("da", lang.get().name())
+      }
+    })
   }
 }

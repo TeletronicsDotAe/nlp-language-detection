@@ -1,7 +1,7 @@
 package ae.teletronics.nlp.language.detection.detectors
 
 import com.neovisionaries.i18n.LanguageCode
-import org.junit.Test
+import org.junit.{Ignore, Test}
 import org.junit.Assert.assertEquals
 
 import scala.io.Source
@@ -32,6 +32,7 @@ class FallbackDetectorTest {
     }
   }
 
+  @Ignore
   @Test
   def testEuroparl() = {
     var count = 0
@@ -53,6 +54,7 @@ class FallbackDetectorTest {
     // carrot, optimaze, champeau: failed: 23, undefined: 289
   }
 
+  @Ignore
   @Test
   def testConfidenceLevel() = {
     // For each text, detect it and compare with the provided language
