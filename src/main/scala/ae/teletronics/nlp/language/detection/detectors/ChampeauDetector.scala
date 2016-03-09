@@ -7,10 +7,15 @@ import com.neovisionaries.i18n.LanguageCode
 import me.champeau.ld.LangDetector.Score
 import me.champeau.ld.UberLanguageDetector
 
+object ChampeauDetector {
+  private val DEFAULT_CONFIDENCE_LEVEL = 100
+
+  def newInstance() = new ChampeauDetector(DEFAULT_CONFIDENCE_LEVEL)
+}
 /**
   * Created by trym on 18-02-2016.
   */
-class ChampeauDetector(confidenceLevel: Double = 100) extends SLanguageDetector {
+class ChampeauDetector(confidenceLevel: Double = ChampeauDetector.DEFAULT_CONFIDENCE_LEVEL) extends SLanguageDetector {
 
   override def detect(text: String): Optional[LanguageCode] = {
     val res: util.Collection[Score] = UberLanguageDetector.getInstance().scoreLanguages(text)

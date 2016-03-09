@@ -9,10 +9,13 @@ import com.neovisionaries.i18n.LanguageCode
   * Created by trym on 18-02-2016.
   */
 object CarrotDetector {
-  val instance = new LangIdV3()
+  private val DEFAULT_CONFIDENCE_LEVEL = 0.999
+  private val instance = new LangIdV3()
+
+  def newInstance() = new CarrotDetector(DEFAULT_CONFIDENCE_LEVEL)
 }
 
-class CarrotDetector(confidenceLevel: Double = 0.999) extends SLanguageDetector {
+class CarrotDetector(confidenceLevel: Double = CarrotDetector.DEFAULT_CONFIDENCE_LEVEL) extends SLanguageDetector {
 
   override def detect(text: String): Optional[LanguageCode] = {
     val res = CarrotDetector.instance.classify(text, true)

@@ -14,7 +14,7 @@ import scala.util.Try
   */
 object OptimaizeDetector {
   // minimalConfidence can be tweaked, but want a real hit or no hit on language, so keep high confidence
-  val instance = LanguageDetectorBuilder.
+  private val instance = LanguageDetectorBuilder.
     create(NgramExtractors.standard).
     withProfiles(new LanguageProfileReader().readAllBuiltIn()).
     minimalConfidence(0.99999).
