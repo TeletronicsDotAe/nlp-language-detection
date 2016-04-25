@@ -1,7 +1,6 @@
 package ae.teletronics.nlp.language.detection.detectors
 
-import java.util.Optional
-
+import ae.teletronics.nlp.language.detection.model.Language
 import com.neovisionaries.i18n.LanguageCode
 import org.apache.tika.language.LanguageIdentifier
 
@@ -9,13 +8,15 @@ import org.apache.tika.language.LanguageIdentifier
   * Created by trym on 18-02-2016.
   */
 class TikaDetector extends SLanguageDetector {
-  override def detect(text: String): Optional[LanguageCode] = {
+  override def minimalConfidence() = 0.5
+
+  override def detect(text: String): java.util.List[Language] = {
+    import scala.collection.JavaConversions._
     val languageIdentifier = new LanguageIdentifier(text)
-    val lang = if (languageIdentifier.isReasonablyCertain()) {
-      LanguageCode.getByCodeIgnoreCase(languageIdentifier.getLanguage())
+    if (languageIdentifier.isReasonablyCertain()) {
+      List(new Language(LanguageCode.getByCodeIgnoreCase(languageIdentifier.getLanguage()), 0.5))
     } else {
-      null
+      List.empty[Language]
     }
-    Optional.ofNullable(lang)
   }
 }

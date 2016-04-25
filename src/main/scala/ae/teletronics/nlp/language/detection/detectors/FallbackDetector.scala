@@ -1,8 +1,8 @@
 package ae.teletronics.nlp.language.detection.detectors
 
-import java.util.Optional
+import java.util
 
-import com.neovisionaries.i18n.LanguageCode
+import ae.teletronics.nlp.language.detection.model.Language
 
 
 object FallbackDetector {
@@ -13,18 +13,20 @@ object FallbackDetector {
 }
 
 class FallbackDetector(detectors: List[SLanguageDetector]) extends SLanguageDetector {
+  override def minimalConfidence() = detectors.head.minimalConfidence()
 
-  override def detect(text: String): Optional[LanguageCode] = {
+  override def detect(text: String): java.util.List[Language] = {
     var index = 0
-    var res = detectors(index).detect(text)
-    while (!res.isPresent() && ((index + 1) < detectors.size)) {
+    var res: util.List[Language] = detectors(index).detect(text)
+    while (!res.isEmpty() && ((index + 1) < detectors.size)) {
       index = index + 1
       res = detectors(index).detect(text)
     }
-    if (res.isPresent()) {
-      Optional.of(res.get())
+    if (!res.isEmpty()) {
+      res
     } else {
-      Optional.empty()
+      import scala.collection.JavaConversions._
+      List.empty[Language]
     }
   }
 }

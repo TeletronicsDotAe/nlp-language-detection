@@ -1,7 +1,6 @@
 package ae.teletronics.nlp.language.detection.detectors
 
-import java.util.Optional
-
+import ae.teletronics.nlp.language.detection.model.Language
 import com.neovisionaries.i18n.LanguageCode
 import com.optimaize.langdetect.LanguageDetectorBuilder
 import com.optimaize.langdetect.ngram.NgramExtractors
@@ -22,13 +21,14 @@ object OptimaizeDetector {
 }
 
 class OptimaizeDetector extends SLanguageDetector {
-
-  override def detect(text: String): Optional[LanguageCode] = {
+  override def minimalConfidence() = 0.99999
+  override def detect(text: String): java.util.List[Language] = {
     val res = Try(OptimaizeDetector.instance.detect(text))
-    if (res.isSuccess && res.get.isPresent) {
-      Optional.ofNullable(LanguageCode.getByCodeIgnoreCase(res.get.get().getLanguage))
+    import scala.collection.JavaConversions._
+    if (res.isSuccess && res.get.isPresent()) {
+      List(new Language(LanguageCode.getByCodeIgnoreCase(res.get.get().getLanguage), 0.99999))
     } else {
-      Optional.empty()
+      List.empty[Language]
     }
   }
 

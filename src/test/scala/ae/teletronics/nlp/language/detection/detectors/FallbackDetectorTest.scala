@@ -1,8 +1,8 @@
 package ae.teletronics.nlp.language.detection.detectors
 
 import com.neovisionaries.i18n.LanguageCode
-import org.junit.{Ignore, Test}
 import org.junit.Assert.assertEquals
+import org.junit.{Ignore, Test}
 
 import scala.io.Source
 
@@ -102,10 +102,13 @@ class FallbackDetectorTest {
   //      private val detector = new FallbackDetector(List(new OptimaizeDetector()))
 
   private def detectLang(twitterText: String): String = {
-    detector.
-      detect(twitterText).
-      orElse(LanguageCode.undefined).
-      name()
+    val languages = detector.
+      detect(twitterText)
+    if (!languages.isEmpty()) {
+      languages.get(0).code.name()
+    } else {
+      LanguageCode.undefined.name()
+    }
   }
 
   /*

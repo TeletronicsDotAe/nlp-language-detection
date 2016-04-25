@@ -1,8 +1,9 @@
 package ae.teletronics.nlp.language.detection.detectors
 
-import java.util.Optional
+import java.util
 
-import com.carrotsearch.labs.langid.LangIdV3
+import ae.teletronics.nlp.language.detection.model.Language
+import com.carrotsearch.labs.langid.{DetectedLanguage, LangIdV3}
 import com.neovisionaries.i18n.LanguageCode
 
 /**
@@ -17,14 +18,27 @@ object CarrotDetector {
 
 class CarrotDetector(confidenceLevel: Double = CarrotDetector.DEFAULT_CONFIDENCE_LEVEL) extends SLanguageDetector {
 
-  override def detect(text: String): Optional[LanguageCode] = {
-    val res = CarrotDetector.instance.classify(text, true)
-    //println("CarrotDetector: confidence: " + res.getConfidence())
-    if (res.getConfidence() > confidenceLevel) {
-      Optional.of(LanguageCode.getByCodeIgnoreCase(res.getLangCode()))
-    } else {
-      Optional.empty()
-    }
+  override def minimalConfidence() = confidenceLevel
+
+  override def detect(text: String): java.util.List[Language] = {
+    val detector = CarrotDetector.instance
+    detector.reset()
+    detector.append(text)
+    val ranked: util.List[DetectedLanguage] = detector.rank(true)
+
+    import scala.collection.JavaConversions._
+    ranked.
+      filter(r => r.getConfidence > 0.000001).
+      sortWith(_.getConfidence > _.getConfidence).
+      map(r => new Language(LanguageCode.getByCodeIgnoreCase(r.getLangCode()), r.getConfidence))
+
+//    val res = CarrotDetector.instance.classify(text, true)
+//    //println("CarrotDetector: confidence: " + res.getConfidence())
+//    if (res.getConfidence() > confidenceLevel) {
+//      Optional.of(LanguageCode.getByCodeIgnoreCase(res.getLangCode()))
+//    } else {
+//      Optional.empty()
+//    }
   }
 
 }

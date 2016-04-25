@@ -1,10 +1,9 @@
 package ae.teletronics.nlp.language.detection.detectors
 
-import java.util
 import java.util.Optional
 
+import ae.teletronics.nlp.language.detection.model.Language
 import com.neovisionaries.i18n.LanguageCode
-import me.champeau.ld.LangDetector.Score
 import me.champeau.ld.UberLanguageDetector
 
 object ChampeauDetector {
@@ -16,20 +15,12 @@ object ChampeauDetector {
   * Created by trym on 18-02-2016.
   */
 class ChampeauDetector(confidenceLevel: Double = ChampeauDetector.DEFAULT_CONFIDENCE_LEVEL) extends SLanguageDetector {
-
-  override def detect(text: String): Optional[LanguageCode] = {
-    val res: util.Collection[Score] = UberLanguageDetector.getInstance().scoreLanguages(text)
-    val iterator = res.iterator()
-    if (iterator.hasNext){
-      val score = res.iterator().next()
-      if (score.getScore() > confidenceLevel) {
-        Optional.of(LanguageCode.getByCodeIgnoreCase(score.getLanguage))
-      } else {
-        Optional.empty()
-      }
-    } else {
-      Optional.empty()
-    }
+  override def minimalConfidence() = confidenceLevel
+  override def detect(text: String): java.util.List[Language] = {
+    import scala.collection.JavaConversions._
+    UberLanguageDetector.getInstance().
+      scoreLanguages(text).toList.
+      map(r => new Language(LanguageCode.getByCodeIgnoreCase(r.getLanguage), r.getScore))
   }
 
   def detectOld(text: String): Optional[LanguageCode] = {
