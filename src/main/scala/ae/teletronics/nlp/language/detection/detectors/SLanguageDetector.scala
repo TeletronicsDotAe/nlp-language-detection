@@ -12,5 +12,5 @@ trait SLanguageDetector {
     * Returns an empty iterator if no languages are detected,
     * otherwise an iterator with the probable languages
     */
-  def detect(text: String): java.util.List[Language]
+  def detect(text: String): List[Language]
 }

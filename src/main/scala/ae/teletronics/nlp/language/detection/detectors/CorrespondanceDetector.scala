@@ -5,14 +5,12 @@ import java.util
 import ae.teletronics.nlp.language.detection.model.Language
 import com.neovisionaries.i18n.LanguageCode
 
-import scala.collection.JavaConversions._
-
 /**
   * Created by trym on 18-04-2016.
   */
 class CorrespondanceDetector(detector: SLanguageDetector) {
 
-  def detect(messages: java.util.List[String]): java.util.List[LanguageCode] = {
+  def detect(messages: List[String]): List[LanguageCode] = {
     val languages = messages.map(detector.detect)
     val primaryLanguages = languages.
       filter(_.nonEmpty).
@@ -28,7 +26,7 @@ class CorrespondanceDetector(detector: SLanguageDetector) {
 
 //    println(confidentLang2MsgCount.keySet)
 
-    val total = messages.size()
+    val total = messages.size
     // choose which language each messages is detected as
     languages.map(ll => {
       if (ll.isEmpty) { // no language available by the detector
@@ -54,13 +52,13 @@ class CorrespondanceDetector(detector: SLanguageDetector) {
     lang2MsgCount.getOrElse(code, -1) <= (total / 100) // less than one percent
   }
 
-  private def getConfidentLanguage(confident: Set[LanguageCode], possible: util.List[Language]) = {
+  private def getConfidentLanguage(confident: Set[LanguageCode], possible: List[Language]) = {
     possible.
       find(language => confident.contains(language.code)). // && language.confidence >= 0.99
       map(_.code)
   }
 
-  private def hasLanguage(confident: Set[LanguageCode], possible: java.util.List[Language]) =
+  private def hasLanguage(confident: Set[LanguageCode], possible: List[Language]) =
     getConfidentLanguage(confident, possible).isDefined
 
 }
