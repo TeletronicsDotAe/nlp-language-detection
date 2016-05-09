@@ -16,11 +16,12 @@ object ChampeauDetector {
   */
 class ChampeauDetector(confidenceLevel: Double = ChampeauDetector.DEFAULT_CONFIDENCE_LEVEL) extends SLanguageDetector {
   override def minimalConfidence() = confidenceLevel
-  override def detect(text: String): java.util.List[Language] = {
+  override def detect(text: String): List[Language] = {
     import scala.collection.JavaConversions._
-    UberLanguageDetector.getInstance().
-      scoreLanguages(text).toList.
-      map(r => new Language(LanguageCode.getByCodeIgnoreCase(r.getLanguage), r.getScore))
+    UberLanguageDetector.getInstance()
+      .scoreLanguages(text)
+      .map(r => new Language(LanguageCode.getByCodeIgnoreCase(r.getLanguage), r.getScore))
+      .toList
   }
 
   def detectOld(text: String): Optional[LanguageCode] = {

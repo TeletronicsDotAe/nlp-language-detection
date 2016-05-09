@@ -104,8 +104,8 @@ class FallbackDetectorTest {
   private def detectLang(twitterText: String): String = {
     val languages = detector.
       detect(twitterText)
-    if (!languages.isEmpty()) {
-      languages.get(0).code.name()
+    if (!languages.isEmpty) {
+      languages(0).code.name()
     } else {
       LanguageCode.undefined.name()
     }

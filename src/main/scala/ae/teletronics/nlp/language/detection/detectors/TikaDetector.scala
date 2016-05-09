@@ -10,8 +10,7 @@ import org.apache.tika.language.LanguageIdentifier
 class TikaDetector extends SLanguageDetector {
   override def minimalConfidence() = 0.5
 
-  override def detect(text: String): java.util.List[Language] = {
-    import scala.collection.JavaConversions._
+  override def detect(text: String): List[Language] = {
     val languageIdentifier = new LanguageIdentifier(text)
     if (languageIdentifier.isReasonablyCertain()) {
       List(new Language(LanguageCode.getByCodeIgnoreCase(languageIdentifier.getLanguage()), 0.5))

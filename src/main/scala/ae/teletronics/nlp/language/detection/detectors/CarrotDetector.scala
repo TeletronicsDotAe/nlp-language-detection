@@ -20,25 +20,19 @@ class CarrotDetector(confidenceLevel: Double = CarrotDetector.DEFAULT_CONFIDENCE
 
   override def minimalConfidence() = confidenceLevel
 
-  override def detect(text: String): java.util.List[Language] = {
+  override def detect(text: String): List[Language] = {
     val detector = CarrotDetector.instance
     detector.reset()
     detector.append(text)
+
     val ranked: util.List[DetectedLanguage] = detector.rank(true)
 
     import scala.collection.JavaConversions._
-    ranked.
-      filter(r => r.getConfidence > 0.000001).
-      sortWith(_.getConfidence > _.getConfidence).
-      map(r => new Language(LanguageCode.getByCodeIgnoreCase(r.getLangCode()), r.getConfidence))
-
-//    val res = CarrotDetector.instance.classify(text, true)
-//    //println("CarrotDetector: confidence: " + res.getConfidence())
-//    if (res.getConfidence() > confidenceLevel) {
-//      Optional.of(LanguageCode.getByCodeIgnoreCase(res.getLangCode()))
-//    } else {
-//      Optional.empty()
-//    }
+    ranked
+      .filter(r => r.getConfidence > 0.000001)
+      .sortWith(_.getConfidence > _.getConfidence)
+      .map(r => new Language(LanguageCode.getByCodeIgnoreCase(r.getLangCode()), r.getConfidence))
+      .toList
   }
 
 }

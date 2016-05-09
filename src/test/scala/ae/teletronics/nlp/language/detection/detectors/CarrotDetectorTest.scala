@@ -11,14 +11,12 @@ class CarrotDetectorTest {
 
   @Test
   def testNoHits() = {
-    assertTrue(underTest.detect("anadfyadsf").isEmpty())
+    assertTrue(underTest.detect("anadfyadsf").isEmpty)
   }
 
   @Test
   def testIsEnglish() = {
-    import scala.collection.JavaConversions._
-    val languages = underTest.detect("sunshine").toList
+    val languages = underTest.detect("sunshine")
     assertTrue(languages.size > 0)
-//    languages.foreach(l => println(l.code + ": " + l.confidence))
   }
 }
