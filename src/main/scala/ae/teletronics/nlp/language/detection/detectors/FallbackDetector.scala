@@ -6,16 +6,10 @@ class FallbackDetector(detectors: List[SLanguageDetector]) extends SLanguageDete
   override def minimalConfidence() = detectors.head.minimalConfidence()
 
   override def detect(text: String): List[Language] = {
-    var index = 0
-    var res: List[Language] = detectors(index).detect(text)
-    while (!res.isEmpty && ((index + 1) < detectors.size)) {
-      index = index + 1
-      res = detectors(index).detect(text)
-    }
-    if (!res.isEmpty) {
-      res
-    } else {
-      List.empty[Language]
-    }
+    detectors
+      .iterator // iterators are lazy, so the following map and find only evaluates as much as needed
+      .map(_.detect(text))
+      .find(!_.isEmpty)
+      .getOrElse(List.empty[Language])
   }
 }
