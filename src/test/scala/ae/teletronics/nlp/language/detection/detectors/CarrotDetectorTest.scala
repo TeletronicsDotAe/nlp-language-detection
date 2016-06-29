@@ -10,8 +10,10 @@ class CarrotDetectorTest {
   val underTest = new CarrotDetector()
 
   @Test
-  def testNoHits() = {
-    assertTrue(underTest.detect("anadfyadsf").isEmpty)
+  def testNoProbableHits() = {
+    val languages = underTest.detect("anadfyadsf")
+    val probableLanguages = languages.filter(_.confidence > 0.2)
+    assertTrue(probableLanguages.isEmpty)
   }
 
   @Test
